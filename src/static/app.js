@@ -1,4 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Unregister participant from activity
+    window.unregisterParticipant = function(activityName, email) {
+      if (!confirm(`Remove ${email} from ${activityName}?`)) return;
+      fetch(`/activities/${encodeURIComponent(activityName)}/unregister`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => { throw new Error(data.detail || "Error") });
+          }
+          return response.json();
+        })
+        .then(() => {
+          // Refresh activities list or UI
+          fetchActivities();
+        })
+        .catch(err => {
+          alert("Failed to remove participant: " + err.message);
+        });
+    }
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
@@ -26,8 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsHTML = `
             <div class="participants-section">
               <strong>Participants:</strong>
-              <ul class="participants-list">
-                ${details.participants.map(p => `<li>${p}</li>`).join("")}
+              <ul class="participants-list" style="list-style: none; padding-left: 0;">
+                ${details.participants.map(p => `
+                  <li class="participant-item">
+                    <span>${p}</span>
+                    <button class="delete-participant" title="Remove" onclick="unregisterParticipant('${details.name}', '${p}')">
+                      <span style="color: #fff; font-size: 0.48em; cursor: pointer;">&#128465;</span>
+                    </button>
+                  </li>
+                `).join("")}
               </ul>
             </div>
           `;
