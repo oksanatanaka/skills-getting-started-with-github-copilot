@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <li class="participant-item">
                     <span>${p}</span>
                     <button class="delete-participant" title="Remove" onclick="unregisterParticipant('${name}', '${p}')">
-                      <span style="color: #fff; font-size: 0.48em; cursor: pointer;">&#128465;</span>
+                      <span class="trash-icon">&#128465;</span>
                     </button>
                   </li>
                 `).join("")}
