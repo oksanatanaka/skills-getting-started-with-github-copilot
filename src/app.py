@@ -92,7 +92,7 @@ def get_activities():
 from fastapi import Request
 
 @app.post("/activities/{activity_name}/signup")
-def signup_for_activity(activity_name: str, email: str):
+async def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
