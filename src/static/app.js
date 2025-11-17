@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsHTML = `
             <div class="participants-section">
               <strong>Participants:</strong>
-              <ul class="participants-list" style="list-style: none; padding-left: 0;">
+              <ul class="participants-list">
                 ${details.participants.map(p => `
                   <li class="participant-item">
                     <span>${p}</span>
