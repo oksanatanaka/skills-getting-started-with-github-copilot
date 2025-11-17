@@ -43,39 +43,68 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft = details.max_participants - details.participants.length;
 
         // Participants list HTML
-        let participantsHTML = "";
+        // Build participants section safely
+        let participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+        const participantsTitle = document.createElement("strong");
+        participantsTitle.textContent = "Participants:";
+        participantsSection.appendChild(participantsTitle);
         if (details.participants.length > 0) {
-          participantsHTML = `
-            <div class="participants-section">
-              <strong>Participants:</strong>
-              <ul class="participants-list">
-                ${details.participants.map(p => `
-                  <li class="participant-item">
-                    <span>${p}</span>
-                    <button class="delete-participant" title="Remove" onclick="unregisterParticipant('${name}', '${p}')">
-                      <span class="trash-icon">&#128465;</span>
-                    </button>
-                  </li>
-                `).join("")}
-              </ul>
-            </div>
-          `;
+          const participantsList = document.createElement("ul");
+          participantsList.className = "participants-list";
+          participantsList.style.listStyle = "none";
+          participantsList.style.paddingLeft = "0";
+          details.participants.forEach(p => {
+            const li = document.createElement("li");
+            li.className = "participant-item";
+            const span = document.createElement("span");
+            span.textContent = p;
+            li.appendChild(span);
+            const btn = document.createElement("button");
+            btn.className = "delete-participant";
+            btn.title = "Remove";
+            btn.type = "button";
+            btn.style.cursor = "pointer";
+            btn.addEventListener("click", () => {
+              window.unregisterParticipant(details.name, p);
+            });
+            const iconSpan = document.createElement("span");
+            iconSpan.style.color = "#fff";
+            iconSpan.style.fontSize = "0.48em";
+            iconSpan.style.cursor = "pointer";
+            iconSpan.textContent = "\u{1F5D1}"; // Unicode for 🗑️
+            btn.appendChild(iconSpan);
+            li.appendChild(btn);
+            participantsList.appendChild(li);
+          });
+          participantsSection.appendChild(participantsList);
         } else {
-          participantsHTML = `
-            <div class="participants-section">
-              <strong>Participants:</strong>
-              <p class="participants-none">No participants yet.</p>
-            </div>
-          `;
+          const noneP = document.createElement("p");
+          noneP.className = "participants-none";
+          noneP.textContent = "No participants yet.";
+          participantsSection.appendChild(noneP);
         }
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          ${participantsHTML}
-        `;
+        // Build activity card content safely
+        const h4 = document.createElement("h4");
+        h4.textContent = name;
+        activityCard.appendChild(h4);
+        const descP = document.createElement("p");
+        descP.textContent = details.description;
+        activityCard.appendChild(descP);
+        const schedP = document.createElement("p");
+        const schedStrong = document.createElement("strong");
+        schedStrong.textContent = "Schedule:";
+        schedP.appendChild(schedStrong);
+        schedP.appendChild(document.createTextNode(" " + details.schedule));
+        activityCard.appendChild(schedP);
+        const availP = document.createElement("p");
+        const availStrong = document.createElement("strong");
+        availStrong.textContent = "Availability:";
+        availP.appendChild(availStrong);
+        availP.appendChild(document.createTextNode(` ${spotsLeft} spots left`));
+        activityCard.appendChild(availP);
+        activityCard.appendChild(participantsSection);
 
         activitiesList.appendChild(activityCard);
 
