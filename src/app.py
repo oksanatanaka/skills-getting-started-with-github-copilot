@@ -107,6 +107,8 @@ def signup_for_activity(activity_name: str, email: str):
 async def unregister_participant(activity_name: str, request: Request):
     data = await request.json()
     email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
     activity = activities[activity_name]
