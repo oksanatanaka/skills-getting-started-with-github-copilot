@@ -102,7 +102,7 @@ class TestSignupEndpoint:
         email = "test@mergington.edu"
         response = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response.status_code == 200
         assert email in response.json()["message"]
@@ -112,7 +112,7 @@ class TestSignupEndpoint:
         email = "newstudent@mergington.edu"
         client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         
         # Verify participant was added
@@ -124,7 +124,7 @@ class TestSignupEndpoint:
         """Test signup for non-existent activity returns 404"""
         response = client.post(
             "/activities/Nonexistent Activity/signup",
-            params={"email": "test@mergington.edu"}
+            json={"email": "test@mergington.edu"}
         )
         assert response.status_code == 404
         assert "Activity not found" in response.json()["detail"]
@@ -136,14 +136,14 @@ class TestSignupEndpoint:
         # First signup should succeed
         response1 = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response1.status_code == 200
         
         # Second signup should fail
         response2 = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response2.status_code == 400
         assert "already signed up" in response2.json()["detail"]
@@ -155,14 +155,14 @@ class TestSignupEndpoint:
         # Sign up for Chess Club
         response1 = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response1.status_code == 200
         
         # Sign up for Programming Class
         response2 = client.post(
             "/activities/Programming Class/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response2.status_code == 200
         
@@ -226,7 +226,7 @@ class TestUnregisterEndpoint:
         # Sign up
         response1 = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response1.status_code == 200
         
@@ -254,7 +254,7 @@ class TestEdgeCases:
         email = "spaces@mergington.edu"
         response = client.post(
             "/activities/Chess Club/signup",
-            params={"email": email}
+            json={"email": email}
         )
         assert response.status_code == 200
     
@@ -271,6 +271,6 @@ class TestEdgeCases:
             activities_list = ["Chess Club", "Programming Class", "Gym Class"]
             response = client.post(
                 f"/activities/{activities_list[i]}/signup",
-                params={"email": email}
+                json={"email": email}
             )
             assert response.status_code == 200
